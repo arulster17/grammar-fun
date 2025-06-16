@@ -26,6 +26,6 @@ A
 >>>
 ap,as
 >>>
-ap -> A as
+ap -> A ap
 ap -> A
 ```
