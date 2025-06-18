@@ -61,17 +61,14 @@ def FIRST(symbols, seen):
         sym = symbols[symIndex]
         if symbols[symIndex] in seen:
             return ans
-        curFirst = FIRST(sym, seen)
-        hasE = empty in curFirst
-        print("CURFIRST: " + str(curFirst))
+        curFirst = FIRST([sym], seen)
         ans = ans | curFirst.difference({empty})
-        print("ans: " + str(ans))
         if not empty in curFirst:
             # we are done here
             return ans
         # else we need to consider the next symbol so continue
 
-    return (ans | empty)
+    return (ans | {empty})
             
 
 
@@ -85,7 +82,7 @@ productions = {'b' : [['a', 'B'], [empty]],
 
 terminals, nonterminals, productions = processInput(sys.argv[1])
 
-print(FIRST(['b'], []))
+print(FIRST(['S'], []))
 '''
 b -> a B
 a -> A b

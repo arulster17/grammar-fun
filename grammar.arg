@@ -1,10 +1,13 @@
 This grammar matches regex R = a+. Terminal A represents 'a'.
 >>>
-A,B
+x,y,0,1
 >>>
-a,b
+S,A,B
 >>>
-b -> a B
-a -> A b
-a -> <>
-b -> <>
+S -> A B
+A -> x
+A -> y
+B -> 0
+B -> 1
+A -> <>
+B -> <>
