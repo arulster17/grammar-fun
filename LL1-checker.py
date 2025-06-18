@@ -1,6 +1,6 @@
 import sys
 import time
-empty = 'ε'
+empty = '<>'
 
 # Objects needed
 # terminals - set of terminals
@@ -16,22 +16,33 @@ def processInput(filename):
     with open(filename) as file:
         filetext = file.read()
     pieces = filetext.split("\n>>>\n")
-    print(pieces)
     commentstr = pieces[0]
     print("Comment: ", commentstr)
     terms = pieces[1].split(',')
     nonterms = pieces[2].split(',')
     prodRules = pieces[3].split('\n')
     prods = {}
+    for nt in nonterms:
+        prods[nt] = []
     for rule in prodRules:
         ruleSymbols = rule.split(' ')
-        
+        assert ruleSymbols[0] in nonterms
+        assert ruleSymbols[1] == '->'
+        if ruleSymbols[2] == empty:
+            assert len(ruleSymbols) == 3
+            prods[ruleSymbols[0]].append([empty])
+            continue
+        for sym in ruleSymbols[2:]:
+            assert (sym in terms or sym in nonterms)
+        prods[ruleSymbols[0]].append(ruleSymbols[2:])
 
     return terms, nonterms, prods
 
-def FIRST(symbols, initialNT):
+def FIRST(symbols, seen):
+    print("FIRST("+str(symbols)+","+str(seen)+")")
+    #time.sleep(2)
     # prevent infinite recursion?
-    if symbols[0] == initialNT:
+    if symbols[0] in seen:
         return set()
     if len(symbols) == 1:
         sym = symbols[0]
@@ -42,15 +53,15 @@ def FIRST(symbols, initialNT):
         if sym in nonterminals:
             ans = set()
             for prod in productions[sym]:
-                ans = ans | FIRST(prod, sym)
+                ans = ans | FIRST(prod, seen+[sym])
             return ans
 
     ans = set()
     for symIndex in range(len(symbols)):
         sym = symbols[symIndex]
-        if symbols[symIndex] == initialNT:
+        if symbols[symIndex] in seen:
             return ans
-        curFirst = FIRST(sym, initialNT)
+        curFirst = FIRST(sym, seen)
         hasE = empty in curFirst
         print("CURFIRST: " + str(curFirst))
         ans = ans | curFirst.difference({empty})
@@ -66,18 +77,18 @@ def FIRST(symbols, initialNT):
 
 
 
-terminals, nonterminals, productions = processInput(sys.argv[1])
 
 terminals = {'A','B'}
 nonterminals = {'a','b'}
 productions = {'b' : [['a', 'B'], [empty]],
                'a' : [['A', 'b']]}
 
-print(FIRST(['b'], None))
+terminals, nonterminals, productions = processInput(sys.argv[1])
 
-
+print(FIRST(['b'], []))
 '''
 b -> a B
 a -> A b
 a -> e
 '''
+

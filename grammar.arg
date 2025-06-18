@@ -1,0 +1,10 @@
+This grammar matches regex R = a+. Terminal A represents 'a'.
+>>>
+A,B
+>>>
+a,b
+>>>
+b -> a B
+a -> A b
+a -> <>
+b -> <>
