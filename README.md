@@ -5,6 +5,10 @@ Some functionalities provided:
 - Determine if grammar is LL(1).
 - Convert non-LL(1) grammar to LL(1) (if possible).
 
+Notes:
+
+- Please use the symbol `<>` to represent the empty string (ε)
+
 Input Grammar File Format
 
 ```
@@ -14,7 +18,7 @@ Comma separated Ts (does not include EOF)
 >>>
 Comma separated NTs
 >>>
-Line separated Prod Rules in form NT -> e U (T U NT)^+ (do not include file -> root EOF)
+Line separated Prod Rules in form NT -> <> U (T U NT)^+ (do not include file -> root EOF)
 ```
 
 Example Grammar that matches regex `R = a+`
