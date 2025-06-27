@@ -16,7 +16,7 @@ Comments
 >>>
 Comma separated Ts (does not include EOF)
 >>>
-Comma separated NTs
+Comma separated NTs. The first NT will be considered the start symbol.
 >>>
 Line separated Prod Rules in form NT -> <> U (T U NT)^+ (do not include file -> root EOF)
 ```
