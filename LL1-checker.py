@@ -53,7 +53,7 @@ def FIRST(symbols, seen):
         if sym in nonterminals:
             ans = set()
             for prod in productions[sym]:
-                ans = ans | FIRST(prod, seen+[sym])
+                ans |= FIRST(prod, seen+[sym])
             return ans
 
     ans = set()
@@ -62,7 +62,7 @@ def FIRST(symbols, seen):
         if symbols[symIndex] in seen:
             return ans
         curFirst = FIRST([sym], seen)
-        ans = ans | curFirst.difference({empty})
+        ans |= curFirst.difference({empty})
         if not empty in curFirst:
             # we are done here
             return ans
@@ -72,8 +72,38 @@ def FIRST(symbols, seen):
             
 
 
+def getFirstList():
+    firstlist = {}
+    for t in terminals:
+        firstlist[t] = {t}
+    for n in nonterminals:
+        firstlist[n] = set()
+    firstlist[empty] = {empty}
+    oldsum = -1
+    newsum = 0
+    while newsum != oldsum:
+        print("loop iterating")
+        # go again, update oldsum
+        oldsum = newsum
 
+        for nt in productions:
+            for rule in productions[nt]:
+                # rule of the form nt -> something
+                ans = firstlist[rule[0]].difference({empty})
+                
+                i = 0
+                while i < len(rule)-1 and empty in firstlist[rule[i]]:
+                    ans |= (firstlist[rule[i+1]].difference({empty}))
+                    i += 1
+                if i == len(rule)-1 and empty in firstlist[rule[-1]]:
+                    ans |= {empty}
+                firstlist[nt] |= ans
 
+        # compute newsum
+        newsum = 0
+        for f in firstlist:
+            newsum += len(firstlist[f])
+    return firstlist
 
 terminals = {'A','B'}
 nonterminals = {'a','b'}
@@ -82,7 +112,12 @@ productions = {'b' : [['a', 'B'], [empty]],
 
 terminals, nonterminals, productions = processInput(sys.argv[1])
 
-print(FIRST(['S'], []))
+
+first = getFirstList()
+print(first)
+follow = {}
+
+#print(FIRST(['S'], []))
 '''
 b -> a B
 a -> A b
