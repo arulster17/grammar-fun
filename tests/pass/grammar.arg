@@ -1,4 +1,4 @@
-This grammar matches regex R = a+. Terminal A represents 'a'.
+test grammar
 >>>
 x,y,0,1
 >>>

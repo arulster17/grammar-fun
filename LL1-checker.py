@@ -81,7 +81,7 @@ def getFirstList():
             newsum += len(firstlist[f])
     return firstlist
 
-def getFollowList():
+def getFollowList(firstlist):
     followlist = {}
     for nt in nonterminals:
         followlist[nt] = set()
@@ -98,10 +98,10 @@ def getFollowList():
                 for i in range(len(rule)-1, -1, -1):
                     if rule[i] in nonterminals:
                         followlist[rule[i]] |= trailer
-                        if empty in FIRST[rule[i]]:
-                            trailer |= FIRST[rule[i]].difference({empty})
+                        if empty in firstlist[rule[i]]:
+                            trailer |= firstlist[rule[i]].difference({empty})
                         else:
-                            trailer = FIRST[rule[i]]
+                            trailer = firstlist[rule[i]]
                     else:
                         trailer = {rule[i]}
         oldsum = newsum
@@ -110,27 +110,43 @@ def getFollowList():
             newsum += len(followlist[f])
     return followlist
 
+def firstForList(firstlist, rule):
+    if rule[0] == empty:
+        return {empty}
+
+    ans = firstlist[rule[0]].difference({empty})
+    i = 0
+    while i < len(rule)-1 and empty in firstlist[rule[i]]:
+        ans |= (firstlist[rule[i+1]].difference({empty}))
+        i += 1
+    if i == len(rule)-1 and empty in firstlist[rule[-1]]:
+        ans |= {empty}
+    return ans
+
+def checkLL1(first, follow):
+    for nt in productions:
+        # all rules' FIRST+ must be independent
+        runningFirst = set()
+        for rule in productions[nt]:
+            firstplus = firstForList(first, rule)
+            if empty in firstForList(first, rule):
+                firstplus |= follow[nt]
+            
+            if not runningFirst.isdisjoint(firstplus):
+                return False
+
+            runningFirst |= firstplus
+    return True
+
+
 
 terminals, nonterminals, productions = processInput(sys.argv[1])
 
 
 FIRST = getFirstList()
+FOLLOW = getFollowList(FIRST)
 
-#for term in FIRST:
-#    print(term + ": " + str(FIRST[term]))
+# now actually check the LL1
+print("LL(1):", checkLL1(FIRST, FOLLOW))
 
-
-
-follow = getFollowList()
-
-for term in follow:
-    print(term + ": " + str(follow[term]))
-
-
-#print(FIRST(['S'], []))
-'''
-b -> a B
-a -> A b
-a -> e
-'''
 
