@@ -8,7 +8,7 @@ Some functionalities provided:
 Notes:
 
 - Please use the symbol `<>` to represent the empty string (ε)
-- Reserved names: eof, <>
+- Reserved names: eof, <>, ->
 - Do not use the character ^ in any terminals/nonterminals (used for left factoring)
 
 Input Grammar File Format
