@@ -8,6 +8,8 @@ Some functionalities provided:
 Notes:
 
 - Please use the symbol `<>` to represent the empty string (ε)
+- Reserved names: eof, <>
+- Do not use the character ^ in any terminals/nonterminals (used for left factoring)
 
 Input Grammar File Format
 
@@ -28,7 +30,7 @@ This grammar matches regex R = a+. Terminal A represents 'a'.
 >>>
 A
 >>>
-ap,as
+ap
 >>>
 ap -> A ap
 ap -> A
