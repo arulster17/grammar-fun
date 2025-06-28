@@ -1,7 +1,7 @@
 import sys
 import time
 empty = '<>'
-
+eof = 'eof'
 # Objects needed
 # terminals - set of terminals
 # nonterminals - set of non-terminals
@@ -21,7 +21,6 @@ def processInput(filename):
     terms = pieces[1].split(',')
     nonterms = pieces[2].split(',')
     prodRules = pieces[3].split('\n')
-    print(prodRules)
     prods = {}
     for nt in nonterms:
         prods[nt] = []
@@ -82,22 +81,51 @@ def getFirstList():
             newsum += len(firstlist[f])
     return firstlist
 
-terminals = {'A','B'}
-nonterminals = {'a','b'}
-productions = {'b' : [['a', 'B'], [empty]],
-               'a' : [['A', 'b']]}
+def getFollowList():
+    followlist = {}
+    for nt in nonterminals:
+        followlist[nt] = set()
+    followlist[nonterminals[0]] = {eof}
+
+    oldsum = -1
+    newsum = 0
+    while newsum != oldsum:
+
+        # logic
+        for nt in productions:
+            for rule in productions[nt]:
+                trailer = followlist[nt].copy()
+                for i in range(len(rule)-1, -1, -1):
+                    if rule[i] in nonterminals:
+                        followlist[rule[i]] |= trailer
+                        if empty in FIRST[rule[i]]:
+                            trailer |= FIRST[rule[i]].difference({empty})
+                        else:
+                            trailer = FIRST[rule[i]]
+                    else:
+                        trailer = {rule[i]}
+        oldsum = newsum
+        newsum = 0
+        for f in followlist:
+            newsum += len(followlist[f])
+    return followlist
+
 
 terminals, nonterminals, productions = processInput(sys.argv[1])
 
 
-first = getFirstList()
+FIRST = getFirstList()
 
-for term in first:
-    print(term + ": " + str(first[term]))
+#for term in FIRST:
+#    print(term + ": " + str(FIRST[term]))
 
 
 
-follow = {}
+follow = getFollowList()
+
+for term in follow:
+    print(term + ": " + str(follow[term]))
+
 
 #print(FIRST(['S'], []))
 '''
